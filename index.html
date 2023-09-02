@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Airport Code Quiz</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    text-align: center;
+  }
+  #quiz-container {
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  }
+  #question {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  .option {
+    font-size: 16px;
+    margin: 10px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .option:hover {
+    background-color: #f0f0f0;
+  }
+  #result {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+<div id="quiz-container">
+  <div id="question">What is the airport code for: <span id="airportName"></span>?</div>
+  <div class="option" onclick="checkAnswer('A')"><span id="optionA"></span></div>
+  <div class="option" onclick="checkAnswer('B')"><span id="optionB"></span></div>
+  <div class="option" onclick="checkAnswer('C')"><span id="optionC"></span></div>
+  <div class="option" onclick="checkAnswer('D')"><span id="optionD"></span></div>
+  <button onclick="nextQuestion()">Next Question</button>
+  <div id="result"></div>
+</div>
+
+<script>
+const airportPairs = [
+  // First Set
+  { code: "BHX", name: "birmingham" },
+  { code: "BLQ", name: "bologna" },
+  { code: "GVA", name: "geneva" },
+  { code: "GLA", name: "glasgow" },
+  { code: "KBP", name: "kiew" },
+  { code: "LCA", name: "larnaca" },
+  { code: "LGW", name: "london gatwick" },
+  { code: "STN", name: "london stansted" },
+  { code: "LYS", name: "lyon" },
+  { code: "NCL", name: "newcastle" },
+  { code: "CDG", name: "paris" },
+  { code: "LED", name: "st petersburg- russia" },
+  { code: "ARN", name: "stockholm" },
+  { code: "ZAG", name: "zagreb" },
+  { code: "MXP", name: "milan" },
+  { code: "MAN", name: "manchester" },
+  { code: "CPH", name: "copenhagen" },
+  { code: "BCN", name: "barcelona" },
+  { code: "MAD", name: "madrid" },
+  { code: "MLA", name: "malta" },
+  { code: "DME", name: "moscow" },
+  { code: "VIE", name: "vienna" },
+  { code: "DUS", name: "dusseldorf" },
+  { code: "DUB", name: "dublin" },
+  { code: "FCO", name: "rome" },
+  { code: "PRG", name: "prague" },
+  { code: "OSL", name: "oslo" },
+  { code: "MUC", name: "munich" },
+  { code: "LHR", name: "london" },
+  { code: "OPO", name: "porto- portugal" },
+  { code: "HAM", name: "hamburg" },
+  { code: "FRA", name: "frankfurt" },
+  { code: "AMS", name: "amsterdam" },
+  { code: "BUD", name: "budapest" },
+  { code: "VCE", name: "venice" },
+  { code: "WAW", name: "warsaw" },
+  { code: "ZRH", name: "zürich" },
+  { code: "SAW", name: "sabiha gökçen" },
+  { code: "EDI", name: "edinburgh" },
+  { code: "LIS", name: "lisbon" },
+  { code: "IST", name: "istanbul <3" },
+  { code: "BRU", name: "brussels" },
+  { code: "ATH", name: "athena" },
+
+  // Second Set
+  { code: "BOS", name: "boston" },
+  { code: "EZE", name: "buenos aires argentina" },
+  { code: "DFW", name: "dallas" },
+  { code: "FLL", name: "fort lauderdale" },
+  { code: "YUL", name: "montreal" },
+  { code: "MCO", name: "orlando" },
+  { code: "GIG", name: "rio de jenerio brazil" },
+  { code: "SFO", name: "san francisco" },
+  { code: "GRU", name: "sao paulo brazil" },
+  { code: "IAD", name: "washington" },
+  { code: "SCL", name: "santiago de chile chile" },
+  { code: "EWR", name: "newark" },
+  { code: "YYZ", name: "toronto" },
+  { code: "ORD", name: "chicago" },
+  { code: "SEA", name: "seattle" },
+  { code: "IAH", name: "houston <3" },
+  { code: "MEX", name: "mexico" },
+  { code: "LAX", name: "los angeles" },
+  { code: "JFK", name: "new york" },
+
+  // Third Set
+  { code: "ADL", name: "adelaide australia" },
+  { code: "AMD", name: "ahmedabad india" },
+  { code: "AKL", name: "auckland nz" },
+  { code: "BKK", name: "bangkok thailand" },
+  { code: "PEK", name: "beijing china" },
+  { code: "BLR", name: "bengaluru india" },
+  { code: "MAA", name: "chennai india" },
+  { code: "CHC", name: "christchurch nz" },
+  { code: "CRK", name: "clark philippines" },
+  { code: "CMB", name: "colombo sri lanka" },
+  { code: "DEL", name: "delhi india" },
+  { code: "DAC", name: "dhaka bangladesh" },
+  { code: "CAN", name: "guangzhou china" },
+  { code: "SGN", name: "ho chi minh city" },
+  { code: "HKG", name: "hong kong" },
+  { code: "HYD", name: "hyderabad" },
+  { code: "ISB", name: "islamabad pakistan" },
+  { code: "CGK", name: "jakarta indonesia" },
+  { code: "DPS", name: "bali" },
+  { code: "KHI", name: "karachi pakistan" },
+  { code: "COK", name: "kochi india" },
+  { code: "CCU", name: "kolkata india" },
+  { code: "KUL", name: "kuala lumpur malaysia" },
+  { code: "LHE", name: "lahore pakistan" },
+  { code: "MLE", name: "male maldives" },
+  { code: "MNL", name: "manila philippines" },
+  { code: "MEL", name: "melbourne" },
+  { code: "MUX", name: "multan pakistan" },
+  { code: "BOM", name: "mumbai" },
+  { code: "KIX", name: "osaka japan" },
+  { code: "PER", name: "perth australia" },
+  { code: "PEW", name: "peshawar pakistan" },
+  { code: "HKT", name: "phuket thailand" },
+  { code: "ICN", name: "seoul korea" },
+  { code: "SEZ", name: "seychelles" },
+  { code: "PVG", name: "shanghai" },
+  { code: "TPE", name: "taipei" },
+  { code: "TRV", name: "thiruvananthapuram india" },
+  { code: "NRT", name: "tokyo" },
+  { code: "HND", name: "tokyo" },
+  { code: "INC", name: "yinchuan china" },
+  { code: "CEB", name: "cebu philippines" },
+  { code: "HAN", name: "hanoi vietnam" },
+  { code: "RGN", name: "yangon myanmar" },
+  { code: "CGO", name: "zhengzhou china" },
+  { code: "BNE", name: "brisbane" },
+  { code: "SYD", name: "sydney" }
+];
+
+// Shuffle the airportPairs array
+for (let i = airportPairs.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [airportPairs[i], airportPairs[j]] = [airportPairs[j], airportPairs[i]];
+}
+
+let currentQuestionIndex = -1;
+const options = ["A", "B", "C", "D"];
+
+function getRandomOptions(correctOption) {
+  const allOptions = airportPairs.map(pair => pair.code);
+  const randomOptions = [];
+  
+  while (randomOptions.length < 3) {
+    const randomOption = allOptions[Math.floor(Math.random() * allOptions.length)];
+    if (randomOption !== correctOption && !randomOptions.includes(randomOption)) {
+      randomOptions.push(randomOption);
+    }
+  }
+  
+  return randomOptions;
+}
+
+function setupQuestion() {
+  const airportPair = airportPairs[currentQuestionIndex];
+  const randomOptions = getRandomOptions(airportPair.code);
+  randomOptions.push(airportPair.code);
+  randomOptions.sort(() => Math.random() - 0.005); // Shuffle options
+
+  document.getElementById("airportName").textContent = airportPair.name;
+  document.getElementById("optionA").textContent = randomOptions[0];
+  document.getElementById("optionB").textContent = randomOptions[1];
+  document.getElementById("optionC").textContent = randomOptions[2];
+  document.getElementById("optionD").textContent = randomOptions[3];
+}
+
+function checkAnswer(selectedOption) {
+  const userInput = document.getElementById("option" + selectedOption).textContent;
+  const correctAnswer = airportPairs[currentQuestionIndex].code;
+
+  if (userInput === correctAnswer) {
+    document.getElementById("result").textContent = "Correct! Yes, you are correct.";
+  } else {
+    document.getElementById("result").textContent = "Incorrect. Try again.";
+  }
+}
+
+function nextQuestion() {
+  currentQuestionIndex = (currentQuestionIndex + 1) % airportPairs.length;
+  setupQuestion();
+  document.getElementById("result").textContent = "";
+}
+
+nextQuestion(); // Start with the first question
+</script>
+</body>
+</html>
